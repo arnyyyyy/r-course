@@ -1,0 +1,745 @@
+---
+title: Установка пакетов для курса
+format:
+  html:
+      toc: true
+      toc-location: left
+      toc-title: Список пакетов
+      embed-resources: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  package.startup.message = FALSE
+)
+
+set.seed(42)
+```
+
+У вас уже должны быть установлены R и Positron. Теперь установите пакеты, которые пригодятся на всём курсе. Выполните команду ниже в консоли R, чтобы установить всё сразу. Если она не сработает, устанавливайте пакеты по одному. Для каждого пакета ниже есть команда для установки, краткое описание, ссылки на документацию и пример для проверки работоспособности.
+
+После успешной установки соберите Qmd-файл, он выполнит все команды с проверками, и загрузите его в [папку на Google Drive](https://drive.google.com/drive/folders/1EZlbhXI3Xg-mnD3VpUq7tKLO21utrk5P?usp=drive_link). Он должен выглядеть так же, как HTML-файл, который вы сейчас читаете.
+
+Все шаги мы разбирали в курсе: [установка R и Positron]([R и Positron](https://stepik.org/lesson/2482456/step/1?unit=2520218)), [установка пакетов](https://stepik.org/lesson/2482463/step/9?unit=2520225) и [сборка отчёта](https://stepik.org/lesson/2482460/step/2?unit=2520222).
+Ошибки при установке пакетов случаются: попробуйте разобраться по сообщению в консоли, а если не удастся — напишите в чат или преподавателю и приложите сообщение.
+
+```{r, eval=FALSE}
+# Код в этом чанке установит все необходимые пакеты за один раз
+install.packages(
+  c(
+    "tidyverse",
+    "epiR",
+    "Hmisc",
+    "lmtest",
+    "multcomp",
+    "pROC",
+    "rstatix",
+    "sandwich",
+    "TrialSize",
+    "yardstick",
+    "FactoMineR",
+    "factoextra",
+    "ggbiplot",
+    "dagitty",
+    "ggdag",
+    "corrplot",
+    "ggExtra",
+    "GGally",
+    "ggfortify",
+    "ggpubr",
+    "pheatmap",
+    "plotly",
+    "flextable",
+    "openxlsx",
+    "gtsummary",
+    "devtools",
+    "knitr",
+    "rmarkdown",
+    "styler"
+  )
+)
+```
+
+## tidyverse
+
+Набор пакетов для импорта, преобразования и визуализации данных.
+[Сайт](https://tidyverse.tidyverse.org/){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("tidyverse")
+```
+
+Проверка:
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+beav <- beaver1
+beav$id <- 1:nrow(beaver1)
+beav <- beav |> mutate(activ = factor(activ))
+ggplot(data = beav, aes(x = id, y = temp, group = activ, color = activ)) +
+  geom_line() +
+  geom_point()
+```
+
+## broom
+
+Преобразование результатов статистических моделей в удобные датафреймы.
+[Туториал](https://cran.r-project.org/web/packages/broom/vignettes/broom.html){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("broom")
+```
+
+Проверка:
+
+```{r}
+library(broom)
+
+lmfit <- lm(mpg ~ wt, mtcars)
+tidy(lmfit)
+```
+
+## epiR
+
+Эпидемиологические расчёты.
+[Справка](https://cran.r-project.org/web/packages/epiR/index.html){target="_blank"} · [Справка о размере выборки](https://cran.r-project.org/web/packages/epiR/vignettes/epiR_sample_size.html){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("epiR")
+```
+
+Проверка:
+
+```{r}
+library(epiR)
+
+epi.sssupc(
+  treat = 12,
+  control = 11,
+  sigma = 2,
+  delta = 0.5,
+  n = NA,
+  power = 0.8,
+  r = 1,
+  alpha = 0.05,
+  sided.test = 2
+)
+```
+
+## Hmisc
+
+Много разных функций для подсчёта статистик, моделирования и работы с данными.
+[Справка](https://cran.r-project.org/web/packages/Hmisc/Hmisc.pdf){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("Hmisc")
+```
+
+Проверка:
+
+```{r}
+library(Hmisc)
+
+x1 <- rnorm(100)
+x2 <- rnorm(100)
+y <- exp(x1 + x2 + rnorm(100))
+f <- lm(log(y) ~ x1 + poly(x2, 3), y = TRUE)
+abs.error.pred(lp = exp(fitted(f)), y = y)
+```
+
+## lmtest
+
+Тесты и диагностические инструменты для линейных моделей.
+[Справка](https://cran.r-project.org/web/packages/lmtest/){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("lmtest")
+```
+
+Проверка:
+
+```{r}
+library("sandwich")
+library("lmtest")
+
+data("PetersenCL", package = "sandwich")
+
+m <- lm(y ~ x + year, data = PetersenCL)
+
+coeftest(m, vcov. = vcovHC(m, type = "HC4"))
+```
+
+## multcomp
+
+Множественные сравнения и проверка гипотез.
+[Справка](https://cran.r-project.org/web/packages/multcomp/index.html){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("multcomp")
+```
+
+Проверка:
+
+```{r}
+library(multcomp)
+
+data(swiss)
+
+lmod <- lm(Fertility ~ ., data = swiss)
+
+glht(
+  lmod,
+  linfct = c(
+    "Agriculture = 0",
+    "Examination = 0",
+    "Education = 0",
+    "Catholic = 0",
+    "Infant.Mortality = 0"
+  )
+)
+```
+
+## pROC
+
+Анализ классификаторов (ROC-анализ).
+[Сайт](https://xrobin.github.io/pROC/){target="_blank"} · [Справка](https://cran.r-project.org/web/packages/pROC/index.html){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("pROC")
+```
+
+Проверка:
+
+```{r}
+library(pROC)
+
+data(aSAH)
+
+roc(outcome ~ s100b, aSAH)
+```
+
+## rstatix
+
+Статистические тесты с единообразным синтаксисом. Удобны для автоматизации.
+[Страница пакета на CRAN](https://cran.r-project.org/web/packages/rstatix/index.html){target="_blank"} · [Сайт](https://rpkgs.datanovia.com/rstatix/){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("rstatix")
+```
+
+Проверка:
+
+```{r}
+library(rstatix)
+library(dplyr)
+
+data("ToothGrowth")
+
+ToothGrowth |> t_test(len ~ 1, mu = 0)
+```
+
+## sandwich
+
+Робастные матрицы ковариаций для статистических моделей.
+[Страница пакета на CRAN](https://cran.r-project.org/web/packages/sandwich/index.html){target="_blank"} · [Сайт](https://sandwich.r-forge.r-project.org/){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("sandwich")
+```
+
+Проверка:
+
+```{r}
+library("sandwich")
+
+data("PetersenCL", package = "sandwich")
+
+m <- lm(y ~ x, data = PetersenCL)
+
+sandwich(m)
+```
+
+## TrialSize
+
+Расчёт размера выборки.
+[Справка](https://cran.r-project.org/web/packages/TrialSize/TrialSize.pdf){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("TrialSize")
+```
+
+Проверка:
+
+```{r}
+library(TrialSize)
+
+DLT <- c(0.01, 0.014, 0.025, 0.056, 0.177, 0.594, 0.963)
+Example.11.6.2 <- AB.withDescalation(
+  A = 3,
+  B = 3,
+  C = 1,
+  D = 1,
+  E = 1,
+  DLT = DLT
+)
+Example.11.6.2
+# Example.11.6.2[7]=0.2
+```
+
+## yardstick
+
+Метрики качества классификации и регрессии.
+[Справка](https://cran.r-project.org/web/packages/yardstick/yardstick.pdf){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("yardstick")
+```
+
+Проверка:
+
+```{r}
+library(yardstick)
+library(dplyr)
+
+data("two_class_example")
+data("hpc_cv")
+# Two class
+accuracy(two_class_example, truth, predicted)
+```
+
+## FactoMineR
+
+Многомерный исследовательский анализ.
+[Справка](https://cran.r-project.org/web/packages/FactoMineR/FactoMineR.pdf){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("FactoMineR")
+```
+
+Проверка:
+
+```{r}
+library(FactoMineR)
+
+## Example two-way anova
+data(senso)
+res <- AovSum(Score ~ Product + Day, data = senso)
+res
+```
+
+## factoextra
+
+Визуализация результатов анализа главных компонент (PCA), кластеризации и факторного анализа (FA).
+[Справка](https://cran.r-project.org/web/packages/factoextra/factoextra.pdf){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("factoextra")
+```
+
+Проверка:
+
+```{r}
+library(factoextra)
+
+data(decathlon2)
+decathlon.active <- decathlon2[1:23, 1:10]
+res.pca <- prcomp(decathlon.active, scale = TRUE)
+fviz_pca_biplot(res.pca)
+```
+
+## ggbiplot
+
+Графики для результатов анализа главных компонент (PCA).
+[Туториал](https://cran.r-project.org/web/packages/ggbiplot/readme/README.html){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("ggbiplot")
+```
+
+Проверка:
+
+```{r}
+library(ggplot2)
+library(ggbiplot)
+
+crime.pca <-
+  crime |>
+  dplyr::select(where(is.numeric)) |>
+  prcomp(scale. = TRUE)
+
+ggbiplot(
+  crime.pca,
+  labels = crime$st,
+  circle = TRUE,
+  varname.size = 4,
+  varname.color = "red"
+)
+```
+
+## dagitty
+
+Инструменты для помощи с причинно-следственным выводом.
+[Справка](https://cran.r-project.org/web/packages/dagitty/dagitty.pdf){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("dagitty")
+```
+
+Проверка:
+
+```{r}
+library(dagitty)
+
+g <- dagitty("dag{ z <- x -> y }")
+ancestorGraph(g, "z")
+g <- dagitty("pdag{ z -- x -> y }")
+ancestorGraph(g, "y") # includes z
+```
+
+## ggdag
+
+Визуализация диаграмм для причинно-следственного вывода с помощью ggplot2.
+[Сайт](https://r-causal.github.io/ggdag/){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("ggdag")
+```
+
+Проверка:
+
+```{r}
+library(dplyr)
+library(dagitty)
+library(ggplot2)
+library(ggdag)
+
+dagify(
+  y ~ x,
+  m ~ x + y
+) |>
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_dag_point() +
+  geom_dag_edges_arc() +
+  geom_dag_text() +
+  theme_dag()
+```
+
+## corrplot
+
+Визуализация корреляционных матриц.
+[Справка](https://cran.r-project.org/web/packages/corrplot/corrplot.pdf){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("corrplot")
+```
+
+Проверка:
+
+```{r}
+library(corrplot)
+
+## diverging colors
+par(mar = c(0, 0, 0, 0) + 0.1)
+plot(0, xlim = c(-0.1, 1), ylim = c(0, 1), type = 'n')
+col <- c('RdBu', 'BrBG', 'PiYG', 'PRGn', 'PuOr', 'RdYlBu')
+for (i in 1:length(col)) {
+  colorlegend(
+    COL2(col[i]),
+    -10:10 / 10,
+    align = 'l',
+    cex = 0.8,
+    xlim = c(0, 1),
+    ylim = c(i / length(col) - 0.1, i / length(col)),
+    vertical = FALSE
+  )
+  text(-0.01, i / length(col) - 0.02, col[i], adj = 0.5, pos = 2, cex = 0.8)
+}
+```
+
+## GGally
+
+Многомерные визуализации для ggplot2.
+[Сайт](https://ggobi.github.io/ggally/){target="_blank"} · [Справка](https://cran.r-project.org/web/packages/GGally/index.html){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("GGally")
+```
+
+Проверка:
+
+```{r}
+library(GGally)
+
+data(flea)
+ggpairs(flea, columns = 2:4, ggplot2::aes(colour = species))
+```
+
+## ggExtra
+
+Готовые графики для ggplot2.
+[Туториал](https://cran.r-project.org/web/packages/ggExtra/vignettes/ggExtra.html){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("ggExtra")
+```
+
+Проверка:
+
+```{r}
+library(ggplot2)
+library(ggExtra)
+
+data(iris)
+
+piris <- ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
+  geom_point()
+
+ggMarginal(piris, groupColour = TRUE, groupFill = TRUE)
+```
+
+## ggfortify
+
+Автоматическое построение графиков для моделей.
+[Туториал](https://cran.r-project.org/web/packages/ggfortify/vignettes/basics.html){target="_blank"} · [Страница пакета на CRAN](https://cran.r-project.org/web/packages/ggfortify/index.html){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("ggfortify")
+```
+
+Проверка:
+
+```{r}
+library(ggfortify)
+
+m <- lm(Petal.Width ~ Petal.Length, data = iris)
+
+autoplot(m, which = 1:6, ncol = 2, label.size = 3)
+```
+
+## ggpubr
+
+Создает готовые для публикации графики ggplot2.
+[Сайт](https://rpkgs.datanovia.com/ggpubr/){target="_blank"} · [Страница пакета на CRAN](https://cran.r-project.org/web/packages/ggpubr/index.html){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("ggpubr")
+```
+
+Проверка:
+
+```{r}
+library(ggpubr)
+
+wdata <- data.frame(
+  sex = factor(rep(c("F", "M"), each = 200)),
+  weight = c(rnorm(200, 55), rnorm(200, 58))
+)
+head(wdata, 4)
+
+ggdensity(
+  wdata,
+  x = "weight",
+  add = "mean",
+  rug = TRUE,
+  color = "sex",
+  fill = "sex",
+  palette = c("#00AFBB", "#E7B800")
+)
+```
+
+## pheatmap
+
+Тепловые карты с кластеризацией по строкам и столбцам.
+[Справка](https://cran.r-project.org/web/packages/pheatmap/pheatmap.pdf){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("pheatmap")
+```
+
+Проверка:
+
+```{r}
+library(pheatmap)
+
+# Create test matrix
+test <- matrix(rnorm(200), 20, 10)
+test[1:10, seq(1, 10, 2)] <- test[1:10, seq(1, 10, 2)] + 3
+test[11:20, seq(2, 10, 2)] <- test[11:20, seq(2, 10, 2)] + 2
+test[15:20, seq(2, 10, 2)] <- test[15:20, seq(2, 10, 2)] + 4
+colnames(test) <- paste("Test", 1:10, sep = "")
+rownames(test) <- paste("Gene", 1:20, sep = "")
+# Draw heatmaps
+pheatmap(test)
+```
+
+## plotly
+
+Интерактивные графики для HTML-отчётов.
+[Справка](https://cran.r-project.org/web/packages/plotly/plotly.pdf){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("plotly")
+```
+
+Проверка:
+
+```{r}
+library(plotly)
+
+plot_ly() |> add_data(economics) |> add_trace(x = ~date, y = ~pce)
+```
+
+## flextable
+
+Форматирование таблиц для отчётов в HTML, Word, PowerPoint.
+[Справка](https://cran.r-project.org/web/packages/flextable/){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("flextable")
+```
+
+Проверка:
+
+```{r}
+library(flextable)
+
+flextable(mtcars)
+```
+
+## openxlsx
+
+Чтение и создание Excel-файлов без установки Excel.
+[Справка](https://cran.r-project.org/web/packages/openxlsx/openxlsx.pdf){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("openxlsx")
+```
+
+Проверка:
+
+```{r}
+library(openxlsx)
+
+wb <- createWorkbook()
+addWorksheet(wb, sheetName = "S1")
+addWorksheet(wb, sheetName = "S2")
+addWorksheet(wb, sheetName = "S3")
+activeSheet(wb) # default value is the first sheet active
+activeSheet(wb) <- 1 ## active sheet S1
+activeSheet(wb)
+activeSheet(wb) <- "S2" ## active sheet S2
+activeSheet(wb)
+```
+
+## gtsummary
+
+Готовые статистические таблицы для отчётов.
+[Сайт](https://www.danieldsjoberg.com/gtsummary/){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("gtsummary")
+```
+
+Проверка:
+
+```{r}
+library(gtsummary)
+
+tbl_summary(trial, include = c(age, grade, response), by = trt)
+```
+## devtools
+
+Инструменты для разработки, установки и проверки R-пакетов.
+[Сайт](https://devtools.r-lib.org/){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("devtools")
+```
+
+Проверка:
+
+*Пути к установленным пакетам и их перечень при проверке скрипта на вашем компьютере могут отличаться.*
+
+```{r}
+library(devtools)
+
+loaded_packages()
+```
+
+## knitr
+
+Дополнительные возможности для Quarto и RMarkdown.
+[Справка](https://cran.r-project.org/web/packages/knitr/knitr.pdf){target="_blank"} · [Сайт](https://yihui.org/knitr/){target="_blank"}.
+
+Установка:
+
+```{r, eval=FALSE}
+install.packages("knitr")
+```
+
+Проверка:
+
+```{r}
+library(knitr)
+
+kable(head(iris))
+```
